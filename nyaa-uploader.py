@@ -121,13 +121,6 @@ def get_settings():
         die("Cannot load creds.yaml, cannot continue.")
     return settings
 
-f = """
-    dev-libs/boost-1.52.0-r6 requires >=dev-lang/python-3.2.5-r2:3.2
-    dev-libs/libxml2-2.9.1-r1 requires >=dev-lang/python-3.2.5-r2:3.2[xml]
-    dev-util/gdbus-codegen-2.36.4-r1 requires >=dev-lang/python-3.2.5-r2:3.2[xml]
-    x11-proto/xcb-proto-1.8-r3 requires >=dev-lang/python-3.2.5-r2:3.2
-"""
-
 if __name__ == "__main__":
     args = get_args()
     settings = get_settings()
