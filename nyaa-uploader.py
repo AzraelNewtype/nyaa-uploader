@@ -11,16 +11,17 @@ from os import path
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-g", "--group", help="Nyaa Group Field")
-    parser.add_argument("-t", "--title", help="Nyaa Title Field")
-    parser.add_argument("-p", "--part", help="Nyaa Part Field")
-    parser.add_argument("-y", "--type", help="Nyaa Type Field")
-    parser.add_argument("cat", choices=["lraw", "lsub", "araw", "asub"], help="Nyaa/Tosho Category")
+    parser.add_argument('-g', '--group', help="Nyaa Group Field")
+    parser.add_argument('-t', '--title', help="Nyaa Title Field")
+    parser.add_argument('-p', '--part', help="Nyaa Part Field")
+    parser.add_argument('-y', '--type', help="Nyaa Type Field")
+    parser.add_argument('-H', '--hidden', help="Set Hidden on Nyaa?", action="store_true")
+    parser.add_argument('cat', choices=["lraw", "lsub", "araw", "asub"], help="Nyaa/Tosho Category")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-V', '--video', help="Video file torrent is named for.")
     group.add_argument('-l', '--local', help="Use video/torrent in calling directory. Must be exactly one.",
-                      action="store_true")
-    parser.add_argument("-T", "--torrent", help="Torrent file, if it doesn't match video.")
+                      action='store_true')
+    parser.add_argument('-T', '--torrent', help="Torrent file, if it doesn't match video.")
     return parser.parse_args()
 
 def die(msg="Undefined error."):
@@ -121,13 +122,6 @@ def get_settings():
         die("Cannot load creds.yaml, cannot continue.")
     return settings
 
-f = """
-    dev-libs/boost-1.52.0-r6 requires >=dev-lang/python-3.2.5-r2:3.2
-    dev-libs/libxml2-2.9.1-r1 requires >=dev-lang/python-3.2.5-r2:3.2[xml]
-    dev-util/gdbus-codegen-2.36.4-r1 requires >=dev-lang/python-3.2.5-r2:3.2[xml]
-    x11-proto/xcb-proto-1.8-r3 requires >=dev-lang/python-3.2.5-r2:3.2
-"""
-
 if __name__ == "__main__":
     args = get_args()
     settings = get_settings()
@@ -135,8 +129,12 @@ if __name__ == "__main__":
     url = settings['website']
 
     nyaa_cat = nyaa_categories(args.cat)
+    if args.hidden:
+        nyaa_hide = "1"
+    else:
+        nyaa_hide = "0"
     ul_payload = dict(name="", torrenturl="", catid=nyaa_cat, info=url,
-                      hidden="1", rules="1", submit="Upload" )
+                      hidden=nyaa_hide, rules="1", submit="Upload" )
     if args.local:
         video, torrent = get_file_names(args)
     else:
