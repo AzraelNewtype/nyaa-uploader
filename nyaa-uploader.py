@@ -129,8 +129,12 @@ if __name__ == "__main__":
     url = settings['website']
 
     nyaa_cat = nyaa_categories(args.cat)
+    if args.hidden:
+        nyaa_hide = "1"
+    else:
+        nyaa_hide = "0"
     ul_payload = dict(name="", torrenturl="", catid=nyaa_cat, info=url,
-                      hidden="1", rules="1", submit="Upload" )
+                      hidden=nyaa_hide, rules="1", submit="Upload" )
     if args.local:
         video, torrent = get_file_names(args)
     else:
