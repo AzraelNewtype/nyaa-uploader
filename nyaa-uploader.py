@@ -16,6 +16,7 @@ def get_args():
     parser.add_argument('-p', '--part', help="Nyaa Part Field")
     parser.add_argument('-y', '--type', help="Nyaa Type Field")
     parser.add_argument('-H', '--hidden', help="Set Hidden on Nyaa?", action="store_true")
+    parser.add_argument('-o', '--tosho', help='Submit torrent to tokyotosho.', action='store_true')
     parser.add_argument('cat', choices=["lraw", "lsub", "araw", "asub"], help="Nyaa/Tosho Category")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-V', '--video', help="Video file torrent is named for.")
