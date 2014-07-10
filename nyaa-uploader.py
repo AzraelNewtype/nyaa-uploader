@@ -163,12 +163,14 @@ if __name__ == "__main__":
 
     r = add_torrent_metadata(s, meta_payload)
     link_data_filename = video + '.link.txt'
-    tt_payload = dict(type=tt_categories(args.cat), url=dl_url,
-                      comment="Brought to you by the autoupload script Az hacked up.",
-                      website=url, apikey=settings['tt_api_key'],
-                      send=True)
-    tt_r = submit_to_tokyotosho(tt_payload)
-
     with open(link_data_filename, 'w') as o:
         o.write('Nyaa Download URL: {0}\n'.format(dl_url))
-        o.write('TT Status,ID: {0}\n'.format(tt_r.text))
+
+    if args.tosho:
+        tt_payload = dict(type=tt_categories(args.cat), url=dl_url,
+                          comment="Brought to you by the autoupload script Az hacked up.",
+                          website=url, apikey=settings['tt_api_key'],
+                          send=True)
+        tt_r = submit_to_tokyotosho(tt_payload)
+        with open(link_data_filename, 'w+') as o:
+            o.write('TT Status,ID: {0}\n'.format(tt_r.text))
