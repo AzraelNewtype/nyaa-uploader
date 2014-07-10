@@ -156,8 +156,9 @@ if __name__ == "__main__":
     dl_url = "http://www.nyaa.se/?page=download&tid={0}".format(tid)
 
 
-    meta_payload = dict(redirect=view_url, alias="", submission_key="", tid=tid, group=args.group,
-                        title=args.title, part=args.part, crc32=crc, type=args.type, submit="Submit",
+    meta_payload = dict(redirect=view_url, alias="", submission_key="", tid=tid,
+                        group=args.group, title=args.title, part=args.part,
+                        crc32=crc, type=args.type, submit="Submit",
                         namemod=video, infomod=url, descmod="")
 
     r = add_torrent_metadata(s, meta_payload)
