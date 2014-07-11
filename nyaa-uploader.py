@@ -11,6 +11,7 @@ from os import path
 
 def get_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--verbose', help='Print more data to stdout.', action='store_true')
     parser.add_argument('-g', '--group', help="Nyaa Group Field")
     parser.add_argument('-t', '--title', help="Nyaa Title Field")
     parser.add_argument('-p', '--part', help="Nyaa Part Field")
@@ -147,14 +148,24 @@ if __name__ == "__main__":
 
     crc = get_crc(video)
 
+    if args.verbose:
+        print("Found CRC: {0}".format(crc))
+
     s = requests.session()
     nyaa_login(s, settings)
+
+    if args.verbose:
+        print("Logged in successfully.")
+
     ul_resp = upload_torrent(s, torrent, ul_payload)
 
     tid = get_new_torrent_id(ul_resp)
     view_url = "http://www.nyaa.se/?page=view&tid={0}".format(tid)
     dl_url = "http://www.nyaa.se/?page=download&tid={0}".format(tid)
 
+    if args.verbose:
+        print("Nyaa View Link: {0}".format(view_url))
+        print("Nyaa Download Link: {0}".format(dl_url))
 
     meta_payload = dict(redirect=view_url, alias="", submission_key="", tid=tid,
                         group=args.group, title=args.title, part=args.part,
@@ -162,6 +173,10 @@ if __name__ == "__main__":
                         namemod=video, infomod=url, descmod="")
 
     r = add_torrent_metadata(s, meta_payload)
+    if args.verbose:
+        print("Added following metadata successfully:")
+        print(meta_payload)
+
     link_data_filename = video + '.link.txt'
     with open(link_data_filename, 'w') as o:
         o.write('Nyaa Download URL: {0}\n'.format(dl_url))
@@ -172,5 +187,8 @@ if __name__ == "__main__":
                           website=url, apikey=settings['tt_api_key'],
                           send=True)
         tt_r = submit_to_tokyotosho(tt_payload)
+        if args.verbose:
+            print("Tokyotosho Status URL: http://tokyotosho.info/details.php?id={0}".format(
+                  tt_r.text.split(',')[1]))
         with open(link_data_filename, 'w+') as o:
             o.write('TT Status,ID: {0}\n'.format(tt_r.text))
