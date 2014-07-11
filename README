@@ -16,6 +16,8 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  -v VERBOSE, --verbose VERBOSE
+                          Print more data to stdout.
   -g GROUP, --group GROUP
                         Nyaa Group Field
   -t TITLE, --title TITLE
