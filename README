@@ -1,6 +1,6 @@
 Requires PyYaml and requests.
 
-Fill in the blamks in creds.yaml.example and remove the .example
+Fill in the blanks in creds.yaml.example and remove the .example
 
 Keep the file in the same dir as the script, whatever that is.
 
