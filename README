@@ -23,6 +23,7 @@ optional arguments:
   -p PART, --part PART  Nyaa Part Field
   -y TYPE, --type TYPE  Nyaa Type Field
   -H, --hidden          Set Hidden on Nyaa?
+  -o, --tosho           Submit torrent to tokyotosho.
   -V VIDEO, --video VIDEO
                         Video file torrent is named for.
   -l, --local           Use video/torrent in calling directory. Must be
