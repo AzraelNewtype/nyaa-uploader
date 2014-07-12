@@ -12,6 +12,7 @@ from os import path
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', help='Print more data to stdout.', action='store_true')
+    parser.add_argument('-c', '--crc', help='Override detected CRC')
     parser.add_argument('-g', '--group', help="Nyaa Group Field")
     parser.add_argument('-t', '--title', help="Nyaa Title Field")
     parser.add_argument('-p', '--part', help="Nyaa Part Field")
@@ -89,7 +90,7 @@ def upload_torrent(session, t_in, ul_payload):
         die(nyaa_error_codes(ul_response.status_code))
 
 def get_crc(video):
-    crc_re = r'\[[\w-]+\]\s?[\w\s-]+[\d{2}]?\s?\[([\dABCDEF]+)\]'
+    crc_re = r'[\(\[]([\dA-F]{8})[\)\]]'
     m = re.search(crc_re, video)
     if m:
         return m.group(1)
@@ -146,10 +147,16 @@ if __name__ == "__main__":
         else:
             torrent = video + '.torrent'
 
-    crc = get_crc(video)
+    if args.crc:
+        crc = args.crc
+    else:
+        crc = get_crc(video)
 
     if args.verbose:
-        print("Found CRC: {0}".format(crc))
+        if args.crc:
+            print("Using supplied CRC: {0}".format(crc))
+        else:
+            print("Found CRC: {0}".format(crc))
 
     s = requests.session()
     nyaa_login(s, settings)
