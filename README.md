@@ -1,5 +1,4 @@
 #nyaa-uploader
----
 
 An automated torrent uploader for fansubbers.
 
@@ -23,7 +22,7 @@ Keep the file in the same dir as the script, whatever that is.
 - There hasn't been much testing on deliberately bad input. It will only hose your own accounts (or just break) so there hasn't been much need. 
 - At the moment, it only supports a single nyaa login and tosho account, so if you are a person who uploads for multiple outfits, you'll have to keep multiple `creds.yaml` files around with different names, making sure the active group's is just named `creds.yaml`. This is definitely going to change.
 
-
+##Help Output Example
 ```
 usage: nyaa-uploader.py [-h] [-v] [-c CRC] [-g GROUP] [-t TITLE] [-p PART]
                         [-y TYPE] [-H] [-o] (-V VIDEO | -l) [-T TORRENT]
