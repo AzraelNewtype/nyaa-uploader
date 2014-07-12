@@ -16,7 +16,7 @@ simply don't use the -o flag. Anybody with an account can generate one though.
 If you don't have a nyaa login/password though, **you probably aren't releasing
 enough things that you need this script.**
 
-Keep the file in the same dir as the script, whatever that is.
+Keep `creds.yaml` in the same directory as the script, wherever you put it.
 
 ##Issues
 - There hasn't been much testing on deliberately bad input. It will only hose your own accounts (or just break) so there hasn't been much need. 
