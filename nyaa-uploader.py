@@ -89,9 +89,10 @@ def upload_torrent(session, t_in, ul_payload):
         die(nyaa_error_codes(ul_response.status_code))
 
 def get_crc(video):
-    crc_re = r'\[[\w-]+\]\s?[\w\s-]+[\d{2}]?\s?\[([\dABCDEF]+)\]'
+    crc_re = r'[\(\[]([\dA-F]{8})[\)\]]'
     m = re.search(crc_re, video)
     if m:
+        print(m.groups)
         return m.group(1)
     else:
         print("Failed to find CRC")
@@ -147,6 +148,8 @@ if __name__ == "__main__":
             torrent = video + '.torrent'
 
     crc = get_crc(video)
+    print(crc)
+    raise SystemExit
 
     if args.verbose:
         print("Found CRC: {0}".format(crc))
