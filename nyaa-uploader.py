@@ -19,7 +19,10 @@ def get_args():
     parser.add_argument('-p', '--part', help="Nyaa Part Field")
     parser.add_argument('-y', '--type', help="Nyaa Type Field")
     parser.add_argument('-H', '--hidden', help="Set Hidden on Nyaa?", action="store_true")
-    parser.add_argument('-o', '--tosho', help='Submit torrent to tokyotosho.', action='store_true')
+    tosho_group = parser.add_mutually_exclusive_group()
+    tosho_group.add_argument('-o', '--tosho', help='Submit torrent to tokyotosho.', action='store_true')
+    tosho_group.add_argument('--up-tosho', help='Submit a torrent already on Nyaa to tokyotosho.',
+                        action="store_true")
     parser.add_argument('cat', choices=["lraw", "lsub", "araw", "asub"], help="Nyaa/Tosho Category")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-V', '--video', help="Video file torrent is named for.")
@@ -147,8 +150,10 @@ if __name__ == "__main__":
     args = get_args()
     settings = get_settings()
 
-    url = settings['website']
+    if args.up_tosho:
+        raise SystemExit
 
+    url = settings['website']
     nyaa_cat = nyaa_categories(args.cat)
     if args.hidden:
         nyaa_hide = "1"
