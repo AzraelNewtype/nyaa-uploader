@@ -210,15 +210,19 @@ if __name__ == "__main__":
     link_data_filename = video + '.link.txt'
     with open(link_data_filename, 'w') as o:
         o.write('Nyaa Download URL: {0}\n'.format(dl_url))
+        o.write('Nyaa View URL: {0}\n'.format(view_url))
 
     if args.tosho:
         tt_payload = dict(type=tt_categories(args.cat), url=dl_url,
                           comment="Brought to you by the autoupload script Az hacked up.",
-                          website=url, apikey=settings['tt_api_key'],
-                          send=True)
+                          website=url, apikey=settings['tt_api_key'], send=True)
         tt_r = submit_to_tokyotosho(tt_payload)
+        try:
+            tt_url = 'http://tokyotosho.info/details.php?id={0}'.format(tt_r.text.split(',')[1])
+        except IndexError:
+            die("Didn't find a comma, so the status can't have been returned correctly.")
+
         if args.verbose:
-            print("Tokyotosho Status URL: http://tokyotosho.info/details.php?id={0}".format(
-                  tt_r.text.split(',')[1]))
+            print("Tokyotosho Status URL: {0}".format(tt_url))
         with open(link_data_filename, 'w+') as o:
-            o.write('TT Status,ID: {0}\n'.format(tt_r.text))
+            o.write('TT Status,ID: {0}\n'.format(tt_url))
