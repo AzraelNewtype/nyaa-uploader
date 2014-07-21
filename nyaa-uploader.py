@@ -9,6 +9,7 @@ import sys
 import yaml
 from os import path
 
+
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', help='Print more data to stdout.', action='store_true')
@@ -22,14 +23,16 @@ def get_args():
     parser.add_argument('cat', choices=["lraw", "lsub", "araw", "asub"], help="Nyaa/Tosho Category")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-V', '--video', help="Video file torrent is named for.")
-    group.add_argument('-l', '--local', help="Use video/torrent in calling directory. Must be exactly one.",
-                      action='store_true')
+    group.add_argument('-l', '--local', help="Use video/torrent in calling directory."
+                       "Must be exactly one.", action='store_true')
     parser.add_argument('-T', '--torrent', help="Torrent file, if it doesn't match video.")
     return parser.parse_args()
+
 
 def die(msg="Undefined error."):
     print(msg)
     raise SystemExit
+
 
 def get_file_names(args):
     torrents = glob.glob('*.torrent')
@@ -48,12 +51,14 @@ def get_file_names(args):
 
     return (vids[0], t_out)
 
+
 def nyaa_categories(cat):
     return {
         'lraw': '5_20',
         'lsub': '5_19',
         'araw': '1_11',
         'asub': '1_37'}[cat]
+
 
 def tt_categories(cat):
     return {
@@ -62,19 +67,26 @@ def tt_categories(cat):
         'araw': 7,
         'asub': 1}[cat]
 
+
 def nyaa_error_codes(code):
     return {
         418: "I'm a teapot: You're doing it wrong.",
-        460: "Missing Announce URL: You forgot to include a valid announce URL. Torrents using only DHT are not allowed, because this is most often just a mistake on behalf of the uploader.",
+        460: 'Missing Announce URL: You forgot to include a valid announce URL. Torrents using '
+             'only DHT are not allowed, because this is most often just a mistake on behalf of '
+             'the uploader.',
         461: 'Already Exists: This torrent already exists in the database.',
         462: 'Invalid File: The file you uploaded or linked to does not seem to be a torrent.',
-        463: 'Missing Data: The form is missing required data like the category and/or the checkbox which confirms that you have read the rules.',
-        520: 'Configuration Broken: Server-side error. Wait for a few minutes, and then notify Nyaa if the problem did not go away.'}[code]
+        463: 'Missing Data: The form is missing required data like the category and/or the '
+             'checkbox which confirms that you have read the rules.',
+        520: 'Configuration Broken: Server-side error. Wait for a few minutes, and then notify '
+             'Nyaa if the problem did not go away.'}[code]
+
 
 def nyaa_login(session, settings):
-    login_creds = {'login' : settings['nyaa_login'], 'password' : settings['nyaa_pass'],
-                   'method' : '1', 'submit' : 'Submit'}
+    login_creds = {'login': settings['nyaa_login'], 'password': settings['nyaa_pass'],
+                   'method': '1', 'submit': 'Submit'}
     session.post("http://www.nyaa.se/?page=login", data=login_creds)
+
 
 def upload_torrent(session, t_in, ul_payload):
     try:
@@ -89,6 +101,7 @@ def upload_torrent(session, t_in, ul_payload):
         print("Server returned error code:")
         die(nyaa_error_codes(ul_response.status_code))
 
+
 def get_crc(video):
     crc_re = r'[\(\[]([\dA-F]{8})[\)\]]'
     m = re.search(crc_re, video)
@@ -98,11 +111,13 @@ def get_crc(video):
         print("Failed to find CRC")
         return None
 
+
 def get_new_torrent_id(resp):
     tid_re = r'<a href="http:\/\/www\.nyaa\.se\/\?page=view.*?tid=(\d+)">View your torrent\.<\/a>'
 
     m = re.search(tid_re, resp.text)
     return int(m.group(1))
+
 
 def add_torrent_metadata(session, meta_payload):
     meta_response = session.post('http://www.nyaa.se/?page=manage&op=2', data=meta_payload)
@@ -112,8 +127,10 @@ def add_torrent_metadata(session, meta_payload):
         print("Server returned error code during metadata save:")
         die(nyaa_error_codes(meta_response.status_code))
 
+
 def submit_to_tokyotosho(tt_payload):
     return requests.post('https://www.tokyotosho.info/new.php', data=tt_payload)
+
 
 def get_settings():
     try:
@@ -124,6 +141,7 @@ def get_settings():
     except IOError:
         die("Cannot load creds.yaml, cannot continue.")
     return settings
+
 
 if __name__ == "__main__":
     args = get_args()
@@ -137,7 +155,7 @@ if __name__ == "__main__":
     else:
         nyaa_hide = "0"
     ul_payload = dict(name="", torrenturl="", catid=nyaa_cat, info=url,
-                      hidden=nyaa_hide, rules="1", submit="Upload" )
+                      hidden=nyaa_hide, rules="1", submit="Upload")
     if args.local:
         video, torrent = get_file_names(args)
     else:
