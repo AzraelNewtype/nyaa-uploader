@@ -185,7 +185,7 @@ if __name__ == "__main__":
 
     if args.up_tosho:
         try:
-            with open(video_links_file) as links_raw:
+            with open(link_data_filename) as links_raw:
                 links = yaml.load(links_raw)
         except IOError:
             die("Failed to open {0}. Are you sure you uploaded this video's torrent?"
