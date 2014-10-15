@@ -146,21 +146,32 @@ def get_settings():
     return settings
 
 
+def tokyotosho_upload(cat, dl_url, url, api_key):
+    payload = dict(type=tt_categories(args.cat), url=dl_url,
+                   comment="Brought to you by the autoupload script Az hacked up.",
+                   website=url, apikey=settings['tt_api_key'], send=True)
+    tt_r = submit_to_tokyotosho(payload)
+    try:
+        tt_url = 'http://tokyotosho.info/details.php?id={0}'.format(tt_r.text.split(',')[1])
+    except IndexError:
+        die("Didn't find a comma, so the status can't have been returned correctly.")
+    return tt_url
+
+
+def link_log(logfile, url_type, url, append=False):
+    if append:
+        mode = 'a'
+    else:
+        mode = 'w'
+    with open(logfile, mode) as o:
+        o.write('{0}: {1}\n'.format(url_type, url))
+
 if __name__ == "__main__":
     args = get_args()
+
     settings = get_settings()
-
-    if args.up_tosho:
-        raise SystemExit
-
     url = settings['website']
-    nyaa_cat = nyaa_categories(args.cat)
-    if args.hidden:
-        nyaa_hide = "1"
-    else:
-        nyaa_hide = "0"
-    ul_payload = dict(name="", torrenturl="", catid=nyaa_cat, info=url,
-                      hidden=nyaa_hide, rules="1", submit="Upload")
+
     if args.local:
         video, torrent = get_file_names(args)
     else:
@@ -170,6 +181,34 @@ if __name__ == "__main__":
         else:
             torrent = video + '.torrent'
 
+    link_data_filename = video + '.link.txt'
+
+    if args.up_tosho:
+        try:
+            with open(video_links_file) as links_raw:
+                links = yaml.load(links_raw)
+        except IOError:
+            die("Failed to open {0}. Are you sure you uploaded this video's torrent?"
+                .format(link_data_filename))
+
+        try:
+            dl_url = links['Nyaa Download URL']
+        except IndexError:
+            die("Can't find Nyaa Download URL in {0}. Did you edit it out?"
+                .format(link_data_filename))
+        tt_url = tokyotosho_upload(args.cat, dl_url, url, settings['tt_api_key'])
+        link_log(link_data_filename, 'TT Status', tt_url, True)
+        if args.verbose:
+            print('Got TT Status: {0}'.format(tt_url))
+        die('Submission complete')
+
+    nyaa_cat = nyaa_categories(args.cat)
+    if args.hidden:
+        nyaa_hide = "1"
+    else:
+        nyaa_hide = "0"
+    ul_payload = dict(name="", torrenturl="", catid=nyaa_cat, info=url,
+                      hidden=nyaa_hide, rules="1", submit="Upload")
     if args.crc:
         crc = args.crc
     else:
@@ -207,22 +246,12 @@ if __name__ == "__main__":
         print("Added following metadata successfully:")
         print(meta_payload)
 
-    link_data_filename = video + '.link.txt'
     with open(link_data_filename, 'w') as o:
         o.write('Nyaa Download URL: {0}\n'.format(dl_url))
         o.write('Nyaa View URL: {0}\n'.format(view_url))
 
     if args.tosho:
-        tt_payload = dict(type=tt_categories(args.cat), url=dl_url,
-                          comment="Brought to you by the autoupload script Az hacked up.",
-                          website=url, apikey=settings['tt_api_key'], send=True)
-        tt_r = submit_to_tokyotosho(tt_payload)
-        try:
-            tt_url = 'http://tokyotosho.info/details.php?id={0}'.format(tt_r.text.split(',')[1])
-        except IndexError:
-            die("Didn't find a comma, so the status can't have been returned correctly.")
-
+        tt_url = tokyotosho_upload(args.cat, dl_url, url, settings['tt_api_key'])
         if args.verbose:
             print("Tokyotosho Status URL: {0}".format(tt_url))
-        with open(link_data_filename, 'w+') as o:
-            o.write('TT Status,ID: {0}\n'.format(tt_url))
+        link_log(link_data_filename, 'TT Status', tt_url, True)
