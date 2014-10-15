@@ -21,12 +21,12 @@ def get_args():
     parser.add_argument('-H', '--hidden', help="Set Hidden on Nyaa?", action="store_true")
     tosho_group = parser.add_mutually_exclusive_group()
     tosho_group.add_argument('-o', '--tosho', help='Submit torrent to tokyotosho.', action='store_true')
-    tosho_group.add_argument('--up-tosho', help='Submit a torrent already on Nyaa to tokyotosho.',
-                        action="store_true")
+    tosho_group.add_argument('--up-tosho', help='Submit a torrent already uploaded to Nyaa '
+                             'to tokyotosho.', action="store_true")
     parser.add_argument('cat', choices=["lraw", "lsub", "araw", "asub"], help="Nyaa/Tosho Category")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-V', '--video', help="Video file torrent is named for.")
-    group.add_argument('-l', '--local', help="Use video/torrent in calling directory."
+    group.add_argument('-l', '--local', help="Use video/torrent in calling directory. "
                        "Must be exactly one.", action='store_true')
     parser.add_argument('-T', '--torrent', help="Torrent file, if it doesn't match video.")
     return parser.parse_args()

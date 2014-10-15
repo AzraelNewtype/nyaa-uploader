@@ -25,7 +25,8 @@ Keep `creds.yaml` in the same directory as the script, wherever you put it.
 ##Help Output Example
 ```
 usage: nyaa-uploader.py [-h] [-v] [-c CRC] [-g GROUP] [-t TITLE] [-p PART]
-                        [-y TYPE] [-H] [-o] (-V VIDEO | -l) [-T TORRENT]
+                        [-y TYPE] [-H] [-o | --up-tosho] (-V VIDEO | -l)
+                        [-T TORRENT]
                         {lraw,lsub,araw,asub}
 
 positional arguments:
@@ -44,6 +45,8 @@ optional arguments:
   -y TYPE, --type TYPE  Nyaa Type Field
   -H, --hidden          Set Hidden on Nyaa?
   -o, --tosho           Submit torrent to tokyotosho.
+  --up-tosho            Submit a torrent already uploaded to Nyaa to
+                        tokyotosho.
   -V VIDEO, --video VIDEO
                         Video file torrent is named for.
   -l, --local           Use video/torrent in calling directory. Must be
