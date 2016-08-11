@@ -25,7 +25,7 @@ def get_args():
                              'to tokyotosho.', action="store_true")
     parser.add_argument('cat', choices=["lraw", "lsub", "araw", "asub"], help="Nyaa/Tosho Category")
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('-V', '--video', help="Video file torrent is named for.")
+    group.add_argument('-V', '--video', help="Video file torrent is named for")
     group.add_argument('-l', '--local', help="Use video/torrent in calling directory. "
                        "Must be exactly one.", action='store_true')
     parser.add_argument('-T', '--torrent', help="Torrent file, if it doesn't match video.")
@@ -116,7 +116,7 @@ def get_crc(video):
 
 
 def get_new_torrent_id(resp):
-    tid_re = r'<a href="http:\/\/www\.nyaa\.se\/\?page=view.*?tid=(\d+)">View your torrent\.<\/a>'
+    tid_re = r'tid=(\d+)">View your torrent'
 
     m = re.search(tid_re, resp.text)
     return int(m.group(1))
