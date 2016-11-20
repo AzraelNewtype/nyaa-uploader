@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.3
+#!/usr/bin/env python3.5
 # -*- coding: utf-8 -*-
 
 import argparse
@@ -86,9 +86,10 @@ def nyaa_error_codes(code):
 
 
 def nyaa_login(session, settings):
-    login_creds = {'login': settings['nyaa_login'], 'password': settings['nyaa_pass'],
-                   'method': '1', 'submit': 'Submit'}
-    session.post("http://www.nyaa.se/?page=login", data=login_creds)
+    login_creds = {'method': 1, 'login': settings['nyaa_login'],
+                   'password': settings['nyaa_pass'],
+                   'submit': 'Submit'}
+    r = session.post("https://www.nyaa.se/?page=login", data=login_creds)
 
 
 def upload_torrent(session, t_in, ul_payload):
@@ -97,7 +98,7 @@ def upload_torrent(session, t_in, ul_payload):
     except IOError:
         die("Torrent file {0} cannot be opened.".format(t_in))
 
-    ul_response = session.post('http://www.nyaa.se/?page=upload', files=torrent, data=ul_payload)
+    ul_response = session.post('https://www.nyaa.se/?page=upload', files=torrent, data=ul_payload)
     if ul_response.status_code == requests.codes.ok:
         return ul_response
     else:
@@ -119,11 +120,15 @@ def get_new_torrent_id(resp):
     tid_re = r'tid=(\d+)">View your torrent'
 
     m = re.search(tid_re, resp.text)
-    return int(m.group(1))
+    try:
+        return int(m.group(1))
+    except AttributeError:
+        print(resp.text)
+        raise SystemExit
 
 
 def add_torrent_metadata(session, meta_payload):
-    meta_response = session.post('http://www.nyaa.se/?page=manage&op=2', data=meta_payload)
+    meta_response = session.post('https://www.nyaa.se/?page=manage&op=2', data=meta_payload)
     if meta_response.status_code == requests.codes.ok:
         return meta_response
     else:
@@ -152,7 +157,7 @@ def tokyotosho_upload(cat, dl_url, url, api_key):
                    website=url, apikey=settings['tt_api_key'], send=True)
     tt_r = submit_to_tokyotosho(payload)
     try:
-        tt_url = 'http://tokyotosho.info/details.php?id={0}'.format(tt_r.text.split(',')[1])
+        tt_url = 'https://tokyotosho.info/details.php?id={0}'.format(tt_r.text.split(',')[1])
     except IndexError:
         die("Didn't find a comma, so the status can't have been returned correctly.")
     return tt_url
